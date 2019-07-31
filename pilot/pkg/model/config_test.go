@@ -449,7 +449,7 @@ func TestAuthenticationPolicyConfigWithGlobal(t *testing.T) {
 		policy    *authn.Policy
 	}{
 		{
-			name:   model.DefaultAuthenticationPolicyName,
+			name:   model.DefaultAuthenticationMeshPolicyName,
 			policy: &globalPolicy,
 		},
 		{
@@ -683,10 +683,11 @@ func TestRbacConfig(t *testing.T) {
 
 func TestClusterRbacConfig(t *testing.T) {
 	store := model.MakeIstioStore(memory.Make(model.IstioConfigTypes))
-	addRbacConfigToStore(model.ClusterRbacConfig.Type, model.DefaultRbacConfigName, "", store, t)
+	clusterRbacConfigName := model.GetDefaultClusterRbacConfigName()
+	addRbacConfigToStore(model.ClusterRbacConfig.Type, clusterRbacConfigName, "", store, t)
 	rbacConfig := store.ClusterRbacConfig()
-	if rbacConfig.Name != model.DefaultRbacConfigName {
-		t.Errorf("model.ClusterRbacConfig: expecting %s, but got %s", model.DefaultRbacConfigName, rbacConfig.Name)
+	if rbacConfig.Name != clusterRbacConfigName {
+		t.Errorf("model.ClusterRbacConfig: expecting %s, but got %s", clusterRbacConfigName, rbacConfig.Name)
 	}
 }
 

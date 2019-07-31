@@ -3549,7 +3549,7 @@ func TestValidateAuthenticationMeshPolicy(t *testing.T) {
 	}{
 		{
 			name:       "good name",
-			configName: DefaultAuthenticationPolicyName,
+			configName: DefaultAuthenticationMeshPolicyName,
 			in:         &authn.Policy{},
 			valid:      true,
 		},
@@ -3561,7 +3561,7 @@ func TestValidateAuthenticationMeshPolicy(t *testing.T) {
 		},
 		{
 			name:       "has targets",
-			configName: DefaultAuthenticationPolicyName,
+			configName: DefaultAuthenticationMeshPolicyName,
 			in: &authn.Policy{
 				Targets: []*authn.TargetSelector{{
 					Name: "foo",
@@ -3571,7 +3571,7 @@ func TestValidateAuthenticationMeshPolicy(t *testing.T) {
 		},
 		{
 			name:       "good",
-			configName: DefaultAuthenticationPolicyName,
+			configName: DefaultAuthenticationMeshPolicyName,
 			in: &authn.Policy{
 				Peers: []*authn.PeerAuthenticationMethod{{
 					Params: &authn.PeerAuthenticationMethod_Mtls{},
@@ -3826,6 +3826,7 @@ func TestValidateNetworkEndpointAddress(t *testing.T) {
 }
 
 func TestValidateClusterRbacConfig(t *testing.T) {
+	clusterRbacConfigName := GetDefaultClusterRbacConfigName()
 	cases := []struct {
 		caseName     string
 		name         string
@@ -3842,22 +3843,22 @@ func TestValidateClusterRbacConfig(t *testing.T) {
 			name:     "cluster-rbac-config",
 			in:       &rbac.RbacConfig{Mode: rbac.RbacConfig_ON_WITH_INCLUSION},
 			expectErrMsg: fmt.Sprintf("ClusterRbacConfig has invalid name(cluster-rbac-config), name must be %q",
-				DefaultRbacConfigName),
+				clusterRbacConfigName),
 		},
 		{
 			caseName: "success proto",
-			name:     DefaultRbacConfigName,
+			name:     clusterRbacConfigName,
 			in:       &rbac.RbacConfig{Mode: rbac.RbacConfig_ON},
 		},
 		{
 			caseName:     "empty exclusion",
-			name:         DefaultRbacConfigName,
+			name:         clusterRbacConfigName,
 			in:           &rbac.RbacConfig{Mode: rbac.RbacConfig_ON_WITH_EXCLUSION},
 			expectErrMsg: "exclusion cannot be null (use 'exclusion: {}' for none)",
 		},
 		{
 			caseName:     "empty inclusion",
-			name:         DefaultRbacConfigName,
+			name:         clusterRbacConfigName,
 			in:           &rbac.RbacConfig{Mode: rbac.RbacConfig_ON_WITH_INCLUSION},
 			expectErrMsg: "inclusion cannot be null (use 'inclusion: {}' for none)",
 		},

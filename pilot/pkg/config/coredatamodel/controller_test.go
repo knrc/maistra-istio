@@ -386,7 +386,7 @@ func TestApplyClusterScopedAuthPolicy(t *testing.T) {
 
 	change = convert(
 		[]proto.Message{message1[0]},
-		[]string{"default"},
+		[]string{model.DefaultAuthenticationMeshPolicyName},
 		model.AuthenticationMeshPolicy.Collection, model.AuthenticationMeshPolicy.MessageName)
 	err = controller.Apply(change)
 	g.Expect(err).ToNot(gomega.HaveOccurred())
@@ -402,7 +402,7 @@ func TestApplyClusterScopedAuthPolicy(t *testing.T) {
 	c, err = controller.List(model.AuthenticationMeshPolicy.Type, "")
 	g.Expect(err).ToNot(gomega.HaveOccurred())
 	g.Expect(len(c)).To(gomega.Equal(1))
-	g.Expect(c[0].Name).To(gomega.Equal("default"))
+	g.Expect(c[0].Name).To(gomega.Equal(model.DefaultAuthenticationMeshPolicyName))
 	g.Expect(c[0].Namespace).To(gomega.Equal(""))
 	g.Expect(c[0].Type).To(gomega.Equal(model.AuthenticationMeshPolicy.Type))
 	g.Expect(c[0].Spec).To(gomega.Equal(message1[0]))
@@ -418,7 +418,7 @@ func TestApplyClusterScopedAuthPolicy(t *testing.T) {
 	c, err = controller.List(model.AuthenticationMeshPolicy.Type, "")
 	g.Expect(err).ToNot(gomega.HaveOccurred())
 	g.Expect(len(c)).To(gomega.Equal(1))
-	g.Expect(c[0].Name).To(gomega.Equal("default"))
+	g.Expect(c[0].Name).To(gomega.Equal(model.DefaultAuthenticationMeshPolicyName))
 	g.Expect(c[0].Namespace).To(gomega.Equal(""))
 	g.Expect(c[0].Type).To(gomega.Equal(model.AuthenticationMeshPolicy.Type))
 	g.Expect(c[0].Spec).To(gomega.Equal(message1[0]))

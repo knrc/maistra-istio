@@ -17,6 +17,7 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"istio.io/istio/pilot/pkg/model"
 	"time"
 
 	"k8s.io/api/core/v1"
@@ -72,6 +73,10 @@ func serverCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			serverArgs.KubeConfig = kubeConfig
 			serverArgs.MemberRollName = memberRollName
+			if validationArgs.DeploymentAndServiceNamespace != "" {
+				model.SetDefaultAuthenticationMeshPolicyName(validationArgs.DeploymentAndServiceNamespace)
+				model.SetDefaultClusterRbacConfigName(validationArgs.DeploymentAndServiceNamespace)
+			}
 			if memberRollName != "" {
 				serverArgs.MemberRollNamespace = memberRollNamespace
 				if serverArgs.MemberRollNamespace == "" {

@@ -26,6 +26,10 @@ const (
 )
 
 var (
+	// defaultClusterRbacConfigName is the name of the mesh global ClusterRbacConfig name. Only ClusterRbacConfig with this
+	// name will be considered.
+	defaultClusterRbacConfigName = "istio-system"
+
 	rbacLog = istiolog.RegisterScope("rbac", "rbac debugging", 0)
 )
 
@@ -168,4 +172,12 @@ func NewAuthzPolicies(env *Environment) (*AuthorizationPolicies, error) {
 	}
 
 	return policy, nil
+}
+
+func GetDefaultClusterRbacConfigName() string {
+	return defaultClusterRbacConfigName
+}
+
+func SetDefaultClusterRbacConfigName(clusterRbacConfigName string) {
+	defaultClusterRbacConfigName = defaultClusterRbacConfigName
 }

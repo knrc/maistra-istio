@@ -1433,9 +1433,10 @@ func ValidateAuthenticationPolicy(name, namespace string, msg proto.Message) err
 			errs = appendErrors(errs, validateAuthNPolicyTarget(target))
 		}
 	} else {
-		if name != DefaultAuthenticationPolicyName {
+		meshPolicyName := GetDefaultAuthenticationMeshPolicyName()
+		if name != meshPolicyName {
 			errs = appendErrors(errs, fmt.Errorf("cluster-scoped authentication policy name must be %q, found %q",
-				DefaultAuthenticationPolicyName, name))
+				meshPolicyName, name))
 		}
 		if len(in.Targets) > 0 {
 			errs = appendErrors(errs, fmt.Errorf("cluster-scoped authentication policy must not have targets"))
@@ -1521,14 +1522,31 @@ func ValidateServiceRoleBinding(name, namespace string, msg proto.Message) error
 	return errs
 }
 
-func checkRbacConfig(name, typ string, msg proto.Message) error {
+func getRbacConfigType(cluster bool) string {
+	if cluster {
+		return "ClusterRbacConfig"
+	}
+	return "RbacConfig"
+}
+
+func getDefaultRbacConfigName(cluster bool) string {
+	if cluster {
+		return GetDefaultClusterRbacConfigName()
+	}
+	return DefaultRbacConfigName
+}
+
+func checkRbacConfig(name string, cluster bool, msg proto.Message) error {
 	in, ok := msg.(*rbac.RbacConfig)
+	typ := getRbacConfigType(cluster)
+
 	if !ok {
 		return errors.New("cannot cast to " + typ)
 	}
 
-	if name != DefaultRbacConfigName {
-		return fmt.Errorf("%s has invalid name(%s), name must be %q", typ, name, DefaultRbacConfigName)
+	defaultRbacConfigName := getDefaultRbacConfigName(cluster)
+	if name != defaultRbacConfigName {
+		return fmt.Errorf("%s has invalid name(%s), name must be %q", typ, name, defaultRbacConfigName)
 	}
 
 	if in.Mode == rbac.RbacConfig_ON_WITH_INCLUSION && in.Inclusion == nil {
@@ -1544,13 +1562,13 @@ func checkRbacConfig(name, typ string, msg proto.Message) error {
 
 // ValidateClusterRbacConfig checks that ClusterRbacConfig is well-formed.
 func ValidateClusterRbacConfig(name, namespace string, msg proto.Message) error {
-	return checkRbacConfig(name, "ClusterRbacConfig", msg)
+	return checkRbacConfig(name, true, msg)
 }
 
 // ValidateRbacConfig checks that RbacConfig is well-formed.
 func ValidateRbacConfig(name, namespace string, msg proto.Message) error {
 	log.Warnf("RbacConfig is deprecated, use ClusterRbacConfig instead.")
-	return checkRbacConfig(name, "RbacConfig", msg)
+	return checkRbacConfig(name, false, msg)
 }
 
 func validateJwt(jwt *authn.Jwt) (errs error) {

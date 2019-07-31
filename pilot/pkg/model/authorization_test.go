@@ -303,7 +303,7 @@ func storeWithConfig(clusterRbacConfig, rbacConfig proto.Message) model.IstioCon
 		config := model.Config{
 			ConfigMeta: model.ConfigMeta{
 				Type:      model.ClusterRbacConfig.Type,
-				Name:      "default",
+				Name:      model.GetDefaultClusterRbacConfigName(),
 				Namespace: "default",
 			},
 			Spec: clusterRbacConfig,
@@ -314,7 +314,7 @@ func storeWithConfig(clusterRbacConfig, rbacConfig proto.Message) model.IstioCon
 		config := model.Config{
 			ConfigMeta: model.ConfigMeta{
 				Type:      model.RbacConfig.Type,
-				Name:      "default",
+				Name:      model.DefaultRbacConfigName,
 				Namespace: "default",
 			},
 			Spec: rbacConfig,

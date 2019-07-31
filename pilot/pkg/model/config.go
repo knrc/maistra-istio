@@ -36,6 +36,12 @@ const (
 	DefaultAuthenticationPolicyName = "default"
 )
 
+var (
+	// defaultAuthenticationMeshPolicyName is the name of the cluster-scoped authentication policy. Only
+	// policy with this name in the cluster-scoped will be considered.
+	defaultAuthenticationMeshPolicyName = "istio-system"
+)
+
 // ConfigMeta is metadata attached to each configuration unit.
 // The revision is optional, and if provided, identifies the
 // last update operation on the object.
@@ -240,6 +246,14 @@ func (descriptor ConfigDescriptor) GetByType(name string) (ProtoSchema, bool) {
 		}
 	}
 	return ProtoSchema{}, false
+}
+
+func GetDefaultAuthenticationMeshPolicyName() string {
+	return defaultAuthenticationMeshPolicyName
+}
+
+func SetDefaultAuthenticationMeshPolicyName(authenticationMeshPolicyName string) {
+	defaultAuthenticationMeshPolicyName = authenticationMeshPolicyName
 }
 
 // IstioConfigStore is a specialized interface to access config store using
@@ -939,7 +953,7 @@ func (store *istioConfigStore) AuthenticationPolicyByDestination(service *Servic
 	// `DefaultAuthenticationPolicyName` ("default") will be used. Also, targets spec should be empty.
 	if specs, err := store.List(AuthenticationMeshPolicy.Type, ""); err == nil {
 		for _, spec := range specs {
-			if spec.Name == DefaultAuthenticationPolicyName {
+			if spec.Name == GetDefaultAuthenticationMeshPolicyName() {
 				return &spec
 			}
 		}
@@ -974,7 +988,7 @@ func (store *istioConfigStore) ClusterRbacConfig() *Config {
 		log.Errorf("failed to get ClusterRbacConfig: %v", err)
 	}
 	for _, rc := range clusterRbacConfig {
-		if rc.Name == DefaultRbacConfigName {
+		if rc.Name == GetDefaultClusterRbacConfigName() {
 			return &rc
 		}
 	}
